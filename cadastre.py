@@ -4,7 +4,7 @@ import datetime
 
 #Set environments 
 #Databases
-gdb = r'\\metanoia\geodata\PW\sw_tech\Duplicates\data\dups.gdb'
+gdb = r'\\metanoia\geodata\PW\sw_tech\Cadastre\data\cadastre.gdb'
 sde = r'Database Connections\Connection to GISPRDDB direct connect.sde'
 
 arcpy.env.workspace = gdb
