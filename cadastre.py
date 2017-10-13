@@ -17,13 +17,8 @@ sde_parcel_point = sde + r'\cvgis.CITY.Cadastre\cvgis.CITY.parcel_point'
 #Get data as string and replace - with _
 str_today = str(datetime.date.today()).replace('-','')[2:]
 
-#Output Names
-intersect = gdb + r'\int' + '_' + str_today
-overlap_out = gdb + r'\overlap' + '_' + str_today
-dup_PIN = gdb + r'\PIN' + '_' + str_today
-dup_GPIN = gdb + r'\PIN' + '_' + str_today
-
 def int_parcels():
+  intersect = r'{0}\int_{1}'.format(gdb, str_today)
   arcpy.Intersect_analysis([sde_parcel_area, sde_parcel_point], intersect)
 
 def overlap():
@@ -44,41 +39,44 @@ def overlap():
         count += 1
     print 'Number of overlapping features: ', count
 
+  overlap_out = r'{0}\overlap_{1}'.format(gdb, str_today)
   arcpy.Select_analysis(intersect, overlap_out, 'GPIN <> PARCELSPOL')
   print 'Overlap output at {0}'.format(overlap_out)
   print '\n'
   arcpy.Delete_management(intersect)
 
-def dups():
+def dups(field):
   ''' 
-  Checks that PIN from Parcel Polygon layer is a unique ID 
-  Exports conflicts to dup_YYMMDD in gdb
+  Checks that field from Parcel Polygon layer is a unique ID 
+  Exports conflicts to [field]_YYMMDD in gdb
   '''
-  print '-- Duplicate PIN Analysis --'
-  cursor_fields = ['PIN']
-  pins = []
+  out_namer = r'{0}\{1}_{2}'.format(gdb, field, str_today)
+  print '-- Duplicate Analysis --'
+  cursor_fields = [field]
+  attributes = []
   #Create cursor for values of cursor_fields
   with arcpy.da.SearchCursor(sde_parcel_area, cursor_fields) as cursor:
     #For each row in the cursor, if cursor fields do not equal each other
     for row in cursor:
-      pins.append(str(row[0]))
+      attributes.append(str(row[0]))
   seen = []
   dup_list = []
-  for pin in pins:
-    if pin not in seen:
-      seen.append(pin)
-    elif pin in seen and pin not in dup_list:
-      dup_list.append(pin)
+  for attribute in attributes:
+    if attribute not in seen:
+      seen.append(attribute)
+    elif attribute in seen and attribute not in dup_list:
+      dup_list.append(attribute)
   for dup in dup_list:
-    print 'PIN: ', dup, 'Count: ', pins.count(dup)
+    print '{0}: '.format(field), dup, 'Count: ', attributes.count(dup)
   sql_list = str(dup_list).replace('[', '(').replace(']',')') 
-  expression = 'PIN in {0}'.format(sql_list)
-  arcpy.Select_analysis(sde_parcel_area, dup_out, expression)
-  print 'Duplicate PIN output at {0}'.format(dup_out)
+  expression = '{0} in {1}'.format(field, sql_list)
+  arcpy.Select_analysis(sde_parcel_area, out_name, expression)
+  print 'Duplicate {0} output at {1}'.format(field, out_name)
 
 int_parcels()
 overlap()
-dups()
+dups('PIN')
+dups('GPIN')
 
 
 
