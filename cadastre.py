@@ -17,6 +17,7 @@ sde_parcel_point = sde + r'\cvgis.CITY.Cadastre\cvgis.CITY.parcel_point'
 #Get data as string and replace - with _
 str_today = str(datetime.date.today()).replace('-','')[2:]
 
+#Output Names
 intersect = gdb + r'\int' + '_' + str_today
 overlap_out = gdb + r'\overlap' + '_' + str_today
 dup_out = gdb + r'\dup' + '_' + str_today
@@ -73,7 +74,6 @@ def dups():
   expression = 'PIN in {0}'.format(sql_list)
   arcpy.Select_analysis(sde_parcel_area, dup_out, expression)
   print 'Duplicate PIN output at {0}'.format(dup_out)
-
 
 int_parcels()
 overlap()
