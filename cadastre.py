@@ -20,7 +20,8 @@ str_today = str(datetime.date.today()).replace('-','')[2:]
 #Output Names
 intersect = gdb + r'\int' + '_' + str_today
 overlap_out = gdb + r'\overlap' + '_' + str_today
-dup_out = gdb + r'\dup' + '_' + str_today
+dup_PIN = gdb + r'\PIN' + '_' + str_today
+dup_GPIN = gdb + r'\PIN' + '_' + str_today
 
 def int_parcels():
   arcpy.Intersect_analysis([sde_parcel_area, sde_parcel_point], intersect)
