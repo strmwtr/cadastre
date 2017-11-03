@@ -37,7 +37,7 @@ def overlap():
         count += 1
     print 'Number of overlapping features: ', count
 
-  overlap_out = r'{0}\overlap_b{1}'.format(gdb, str_today)
+  overlap_out = r'{0}\overlap_{1}'.format(gdb, str_today)
   arcpy.Select_analysis(intersect, overlap_out, 'GPIN <> PARCELSPOL')
   print 'Overlap output at {0}'.format(overlap_out)
   print '\n'
