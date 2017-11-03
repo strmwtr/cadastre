@@ -38,7 +38,10 @@ def overlap():
     print 'Number of overlapping features: ', count
 
   overlap_out = r'{0}\overlap_{1}'.format(gdb, str_today)
-  arcpy.Select_analysis(intersect, overlap_out, 'GPIN <> PARCELSPOL')
+  try:
+    arcpy.Select_analysis(intersect, overlap_out, 'GPIN <> PARCELSPOL')
+  except:
+    print 'There are no instances where GPIN <> PARCELSPOL'
   print 'Overlap output at {0}'.format(overlap_out)
   print '\n'
   arcpy.Delete_management(intersect)
