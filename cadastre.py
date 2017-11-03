@@ -37,12 +37,12 @@ def overlap():
         count += 1
     print 'Number of overlapping features: ', count
 
-  overlap_out = r'{0}\overlap_{1}'.format(gdb, str_today)
-  try:
+  overlap_out = r'{0}\overlap_{1}x'.format(gdb, str_today)
+  if count != 0:
     arcpy.Select_analysis(intersect, overlap_out, 'GPIN <> PARCELSPOL')
-  except:
+    print 'Overlap output at {0}'.format(overlap_out)
+  else:
     print 'There are no instances where GPIN <> PARCELSPOL'
-  print 'Overlap output at {0}'.format(overlap_out)
   print '\n'
   arcpy.Delete_management(intersect)
 
@@ -51,7 +51,7 @@ def dups(feat, field):
   Checks that field from Parcel Polygon layer is a unique ID 
   Exports conflicts to [field]_YYMMDD in gdb
   '''
-  out_name = r'{0}\{1}_{2}'.format(gdb, field, str_today)
+  out_name = r'{0}\{1}_{2}x'.format(gdb, field, str_today)
   print '-- Duplicate Analysis --'
   cursor_fields = [field]
   attributes = []
@@ -71,8 +71,11 @@ def dups(feat, field):
     print '{0}: '.format(field), dup, 'Count: ', attributes.count(dup)
   sql_list = str(dup_list).replace('[', '(').replace(']',')') 
   expression = '{0} in {1}'.format(field, sql_list)
-  arcpy.Select_analysis(feat, out_name, expression)
-  print 'Duplicate {0} output at {1}'.format(field, out_name)
+  if sql_list == '()':
+    print '{0} has no duplicates'.format(field)
+  else:
+    arcpy.Select_analysis(feat, out_name, expression)
+    print 'Duplicate {0} output at {1}'.format(field, out_name)
 
 
 overlap()
